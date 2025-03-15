@@ -131,7 +131,7 @@ export default function OrdersPage() {
                               .slice(-6)}.jpg`}
                           >
                             <Download className="w-4 h-4" />
-                            Download High Quality
+                            Download
                           </a>
                         )}
                       </div>
