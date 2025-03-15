@@ -28,6 +28,23 @@ export default function OrdersPage() {
     if (session) fetchOrders();
   }, [session]);
 
+  const handleDownload = async (imageUrl: string, fileName: string) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading image:", error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-[70vh] flex justify-center items-center">
@@ -121,18 +138,18 @@ export default function OrdersPage() {
                         ₹{order.amount.toFixed(2)}
                         </p>
                         {order.status === "completed" && (
-                          <a
-                            href={`${process.env.NEXT_PUBLIC_URL_ENDPOINT}/tr:q-100,w-${variantDimensions.width},h-${variantDimensions.height},cm-extract,fo-center/${product.imageUrl}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <button
+                            onClick={() =>
+                              handleDownload(
+                                `${process.env.NEXT_PUBLIC_URL_ENDPOINT}/tr:q-100,w-${variantDimensions.width},h-${variantDimensions.height},cm-extract,fo-center/${product.imageUrl}`,
+                                `image-${order._id?.toString().slice(-6)}.jpg`
+                              )
+                            }
                             className="btn btn-primary gap-1"
-                            download={`image-${order._id
-                              ?.toString()
-                              .slice(-6)}.jpg`}
                           >
                             <Download className="w-8 h-6" />
                             Download
-                          </a>
+                          </button>
                         )}
                       </div>
                     </div>
